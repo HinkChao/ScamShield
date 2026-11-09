@@ -1,0 +1,2 @@
+# Minimal tooling for local/Colab tests
+pytest>=8,<10
