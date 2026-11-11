@@ -1,0 +1,23 @@
+# Python and test outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+.venv/
+venv/
+# Sensitive local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Datasets and large model artifacts (keep licensed sources documented)
+data/raw/
+data/processed/
+models/*.pkl
+models/*.joblib
+# Local outputs
+*.zip
+.DS_Store

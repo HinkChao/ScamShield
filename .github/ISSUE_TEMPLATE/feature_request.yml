@@ -1,0 +1,35 @@
+name: Component task
+description: Claim a well-scoped development task after the Discord role poll
+title: "[Component] "
+labels: []
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal / user value
+      description: What should a user or another module be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Intended files and interfaces
+      description: Check existing PRs and issues first; avoid overlapping files.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Definition of done
+      value: |
+        - [ ] Code or documentation added
+        - [ ] Relevant tests / examples supplied
+        - [ ] Limitations documented
+        - [ ] PR opened for review
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and coordination
+      description: Note prerequisites, open PRs, and affected teammates.
