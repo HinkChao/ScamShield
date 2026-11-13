@@ -27,7 +27,7 @@ with st.sidebar:
     )
 
     with logo_col:
-        st.image("assets/logo.png", width=60)
+        st.image("BeiVLogo.png", width=60)
 
     with title_col:
         st.title("BeiV")
