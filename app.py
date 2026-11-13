@@ -11,7 +11,7 @@ from src.url_analyzer import analyze_urls
 
 st.set_page_config(
     page_title="BeiV | Explainable Scam Detection",
-    page_icon="🛡️",
+    page_icon="BeiVLogo.png",
     layout="wide"
 )
 
@@ -21,7 +21,14 @@ st.set_page_config(
 # ==================================
 
 with st.sidebar:
-    st.title("🛡️ BeiV")
+    logo_col, title_col = st.columns([1, 3])
+
+    with logo_col:
+        st.image("BeiVLogo.png", width=55)
+
+    with title_col:
+        st.title("BeiV")
+
     st.caption("Scams evolve. Stay one step ahead.")
     st.caption("Multilingual Scam Detection")
     st.divider()
@@ -49,12 +56,16 @@ with st.sidebar:
 # 3. Main Header
 # ==================================
 
-st.title("🛡️ BeiV")
+logo_col, title_col = st.columns([1, 8])
+
+with logo_col:
+    st.image("BeiVLogo.png", width=75)
+
+with title_col:
+    st.title("BeiV")
+
 st.write("**Scams evolve. Stay one step ahead.**")
-st.write(
-    "Analyze suspicious messages and "
-    "identify potential scam indicators."
-)
+st.write("Analyze suspicious messages and identify potential scam indicators.")
 st.divider()
 
 
