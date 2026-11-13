@@ -21,13 +21,13 @@ st.set_page_config(
 # ==================================
 with st.sidebar:
     logo_col, title_col = st.columns(
-        [0.8, 2.5],
+        [0.8, 1.5],
         vertical_alignment="center",
         gap="small"
     )
 
     with logo_col:
-        st.image("BeiVLogo.png", width=65)
+        st.image("assets/logo.png", width=60)
 
     with title_col:
         st.title("BeiV")
@@ -59,8 +59,8 @@ with st.sidebar:
 # 3. Main Header
 # ==================================
 
-logo_col, title_col = st.columns(
-    [0.8, 2.5],
+logo_col, title_col, spacer = st.columns(
+    [1, 1.6, 6],
     vertical_alignment="center",
     gap="small"
 )
