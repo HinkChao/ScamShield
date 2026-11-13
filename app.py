@@ -27,7 +27,7 @@ with st.sidebar:
     )
 
     with logo_col:
-        st.image("assets/logo.png", width=65)
+        st.image("BeiVLogo.png", width=65)
 
     with title_col:
         st.title("BeiV")
@@ -66,7 +66,7 @@ logo_col, title_col = st.columns(
 )
 
 with logo_col:
-    st.image("assets/logo.png", width=90)
+    st.image("BeiVLogo.png", width=90)
 
 with title_col:
     st.title("BeiV")
