@@ -1,6 +1,9 @@
-from src.risk_engine import assess_risk 
-from src.explanation_engine import generate_explanation
 import streamlit as st
+
+from src.risk_engine import assess_risk
+from src.explanation_engine import generate_explanation
+from src.url_analyzer import analyze_urls
+
 
 # ==================================
 # 1. Page Configuration
@@ -12,6 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
+
 # ==================================
 # 2. Sidebar
 # ==================================
@@ -21,16 +25,25 @@ with st.sidebar:
     st.caption("Scams evolve. Stay one step ahead.")
     st.caption("Multilingual Scam Detection")
     st.divider()
+
     language = st.selectbox(
         "Output Language",
         ["繁體中文", "English"]
     )
+
+    if language == "繁體中文":
+        st.info(
+            "Traditional Chinese output is not implemented yet. "
+            "Analysis explanations are currently in English."
+        )
+
     st.divider()
     st.subheader("About")
     st.write(
         "BeiV helps users identify potential scam messages "
         "through text and URL analysis."
     )
+
 
 # ==================================
 # 3. Main Header
@@ -44,11 +57,13 @@ st.write(
 )
 st.divider()
 
+
 # ==================================
 # 4. Input Area
 # ==================================
 
 st.subheader("Message Analysis")
+
 message = st.text_area(
     "Enter a suspicious message",
     placeholder="Paste your suspicious message here...",
@@ -67,29 +82,45 @@ analyze_button = st.button(
 # ==================================
 
 if analyze_button:
+
+    # Clear previous results to prevent stale data.
+    for key in [
+        "submitted_message",
+        "url_results",
+        "assessment",
+        "explanation"
+    ]:
+        st.session_state.pop(key, None)
+
     if not message.strip():
         st.warning("Please enter a message first.")
+
     else:
         try:
-            # Temporary integration:
-            # Upstream analysis modules are not ready yet.
+            # Step 1: Analyze URLs in the message.
+            url_results = analyze_urls(message)
+
+            # Step 2: Assess overall risk.
+            # ML and rule analysis are not connected yet.
             assessment = assess_risk(
                 classifier_result=None,
-                url_evidence=None,
+                url_evidence=url_results,
                 rule_evidence=None
             )
 
-            # Explanation engine currently supports English only.
+            # Step 3: Generate explanation.
             explanation = generate_explanation(
                 assessment,
                 language="en"
             )
 
+            # Step 4: Save results.
+            st.session_state["submitted_message"] = message
+            st.session_state["url_results"] = url_results
             st.session_state["assessment"] = assessment
             st.session_state["explanation"] = explanation
-            st.session_state["submitted_message"] = message
 
-        except Exception as error:
+        except (TypeError, ValueError) as error:
             st.error(f"Analysis error: {error}")
 
 
@@ -104,6 +135,10 @@ if "explanation" in st.session_state:
 
     assessment = st.session_state["assessment"]
     explanation = st.session_state["explanation"]
+
+    # Show the exact message that was analyzed.
+    st.markdown("**Analyzed Message**")
+    st.text(st.session_state["submitted_message"])
 
     col1, col2 = st.columns(2)
 
@@ -122,8 +157,9 @@ if "explanation" in st.session_state:
             )
 
     st.warning(
-        "This is a temporary integration test. "
-        "Actual message detection is not connected yet."
+        "URL structural analysis is connected. "
+        "ML classification and message-rule analysis "
+        "are not connected yet."
     )
 
     # ==================================
@@ -136,12 +172,52 @@ if "explanation" in st.session_state:
         with st.container(border=True):
             st.subheader("🔎 Evidence")
 
+            # Display explanation findings.
             if explanation["explanations"]:
                 for item in explanation["explanations"]:
                     st.write(item["reason"])
                     st.caption(f"Evidence: {item['evidence']}")
             else:
-                st.write("No evidence has been provided yet.")
+                st.write("No warning indicators found.")
+
+            # Display URL analysis results.
+            st.divider()
+            st.markdown("**URL Analysis**")
+
+            url_results = st.session_state.get("url_results", [])
+
+            if not url_results:
+                st.write("No supported URLs found in the message.")
+
+            else:
+                for index, result in enumerate(url_results, start=1):
+                    with st.expander(f"URL {index}: {result['url']}"):
+
+                        st.write(f"Status: {result['status']}")
+
+                        if result.get("hostname"):
+                            st.write(f"Hostname: {result['hostname']}")
+
+                        if result["status"] == "invalid":
+                            st.warning(
+                                f"URL could not be analyzed: "
+                                f"{result.get('reason', 'unknown')}"
+                            )
+
+                        else:
+                            indicators = result.get("indicators", [])
+
+                            if indicators:
+                                for indicator in indicators:
+                                    st.write(
+                                        f"- {indicator['type']} "
+                                        f"({indicator['severity']})"
+                                    )
+                                    st.caption(indicator["evidence"])
+                            else:
+                                st.write(
+                                    "No structural warning indicators found."
+                                )
 
     with col4:
         with st.container(border=True):
