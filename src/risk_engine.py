@@ -75,18 +75,24 @@ def assess_risk(classifier_result, url_evidence, rule_evidence):
         uncertainty.append("ML classification is unavailable.")
     else:
         label = classifier_result.get("label")
+        label = label.strip().lower() if isinstance(label, str) else ""
 
-        if label == "phishing":
+        if label in ("scam", "phishing"):
             indicators.append({
-                "type": "ml_phishing_signal",
+                "type": f"ml_{label}_signal",
                 "evidence": "The text classifier flagged this message.",
-                "severity": "medium",
+                "severity": "high",
                 "source": "ml"
             })
+
             uncertainty.append(
                 "The ML prediction is not proof of fraud."
             )
-        elif label not in ("legitimate",):
+
+        elif label == "legitimate":
+            pass
+
+        else:
             uncertainty.append("ML classification was inconclusive.")
 
     if url_evidence is None:
@@ -97,6 +103,7 @@ def assess_risk(classifier_result, url_evidence, rule_evidence):
 
     # Simple, transparent decision policy.
     independent_types = {item["type"] for item in indicators}
+
     has_high = any(
         item["severity"] == "high" for item in indicators
     )
@@ -129,5 +136,7 @@ def assess_risk(classifier_result, url_evidence, rule_evidence):
         "indicators": indicators,
         "uncertainty": uncertainty,
         "recommended_actions": actions,
-        "analysis_status": "completed_with_limitations" if uncertainty else "completed"
+        "analysis_status": (
+            "completed_with_limitations" if uncertainty else "completed"
+        )
     }
