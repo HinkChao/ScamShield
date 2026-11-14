@@ -60,3 +60,31 @@ def test_invalid_url_evidence():
 
     assert result["risk_level"] == "caution"
     assert any("URL" in u for u in result["uncertainty"])
+
+
+# New tests for text-only scam detection
+
+def test_text_only_scam_triggers_high_risk():
+    ml = {"status": "ok", "label": "scam"}
+
+    result = assess_risk(ml, [], [])
+
+    assert result["risk_level"] == "elevated"
+    assert any(
+        item["source"] == "ml"
+        and item["severity"] == "high"
+        for item in result["indicators"]
+    )
+
+
+def test_text_only_phishing_triggers_high_risk():
+    ml = {"status": "ok", "label": "phishing"}
+
+    result = assess_risk(ml, [], [])
+
+    assert result["risk_level"] == "elevated"
+    assert any(
+        item["source"] == "ml"
+        and item["severity"] == "high"
+        for item in result["indicators"]
+    )
